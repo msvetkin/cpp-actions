@@ -1,0 +1,53 @@
+name: c++ actions
+
+inputs:
+  preset:
+    description: 'cmake preset'
+    required: true
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout reusable workflow repository
+      uses: actions/checkout@v4
+      with:
+        repository: msvetkin/cpp-actions
+        path: .github/tmp/cpp-actions
+        ref: main
+
+    - name: Select dependencies
+      shell: bash
+      run: |
+        echo "debug - pwd = $PWD"
+        echo "debug - ls pwd"
+        ls $PWD
+        echo "debug - ls ./.github"
+        ls ./.github
+        echo "debug - ls ./.github/tmp"
+        ls ./.github/tmp
+        echo "debug - ls ./.github/tmp/cpp-actions"
+        ls ./.github/tmp/cpp-actions
+        # echo "debug - ls foo"
+        # ls foo
+
+        # mkdir -p ./.selected-dependencies &&
+        # cat <<EOF >./.selected-dependencies/action.yml
+        # runs:
+          # using: composite
+          # steps:
+            # - uses: ./.github/actions/${{ steps.preset.outputs.os }}/base
+            # - if: ${{ steps.preset.outputs.compiler_dir }}
+              # uses: ./.github/actions/${{ steps.preset.outputs.os }}/${{ steps.preset.outputs.compiler }}
+            # - if: ${{ steps.preset.outputs.arch_dir }}
+              # uses: ./.github/actions/${{ steps.preset.outputs.os }}/${{ steps.preset.outputs.arch }}
+        # EOF
+
+    # - uses: ./install-dependencies
+      # with:
+        # preset: ${{matrix.target.preset}}
+        #
+    - name: Cleanup
+      if: always()
+      shell: bash
+      run: rm -rf ./.github/tmp/cpp-actions
